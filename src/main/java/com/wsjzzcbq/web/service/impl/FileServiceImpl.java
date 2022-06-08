@@ -84,7 +84,9 @@ public class FileServiceImpl implements FileService {
             for (File f : file.listFiles()) {
                 recursion(f, list);
             }
-        } else {
+        }
+
+        if (file.isFile()) {
             list.add(file);
         }
     }

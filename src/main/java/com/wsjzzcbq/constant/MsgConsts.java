@@ -49,4 +49,6 @@ public class MsgConsts {
     public static final String COPY_SUCCESS_TITLE = "提示";
     public static final String COPY_SUCCESS_MSG = "复制成功";
     public static final String BROWSER_OPEN_FAIL_MSG = "浏览器打开失败";
+    public static final String DELETE_SUCCESS_MSG = "删除成功";
+    public static final String CALCULATION_FINISH_MSG = "计算完成";
 }
