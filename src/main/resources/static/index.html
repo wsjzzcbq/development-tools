@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>局域网通信</title>
+    <link rel="stylesheet" href="/css/vant-2.12.css">
+    <style>
+        .van-nav-bar {
+            /*position: relative;*/
+            position: fixed;
+            z-index: 1;
+            line-height: 22px;
+            text-align: center;
+            background-color:  #409EFF;
+            -webkit-user-select: none;
+            user-select: none;
+            color: white;
+        }
+        .title-style {
+            color: white;
+        }
+        .wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 76px;
+        }
+        .nav_list_show {
+            margin-top: 46px;    /*顶部导航条高度*/
+            /*margin-bottom: 100px; !*低部导航条高度*!*/
+        }
+    </style>
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="/js/vue-2.6.min.js"></script>
+    <script src="/js/vant-2.12.js"></script>
+    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/js/clipboard.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <van-nav-bar :fixed=true :placeholder=true>
+            <div slot="title" class="title-style">局域网通信</div>
+        </van-nav-bar>
+
+        <div v-if="active === 0">
+            <van-progress
+                    ref="progress"
+                    :percentage="percentage"
+                    :show-pivot="false"
+                    color="#7CFC00"
+                    v-if="show"
+            >
+            </van-progress>
+            <van-field
+                    v-model="msg.content"
+                    type="textarea"
+                    rows="5"
+                    label="文本"
+                    placeholder="请输入发送内容">
+            </van-field>
+            <van-button @click="clear" icon="delete" type="default">清空文本</van-button>
+
+            <van-uploader
+                    accept="*"
+                    :after-read="afterRead">
+                <van-button @click="send" icon="add-o" type="info" block>发送文件</van-button>
+            </van-uploader>
+
+            <van-button @click="send" icon="chat-o" type="primary">发送消息</van-button>
+            <van-button id="copy" icon="credit-pay" plain type="info">复制消息</van-button>
+        </div>
+        <div v-else>
+            <van-progress
+                    ref="progress"
+                    :percentage="percentage"
+                    :show-pivot="false"
+                    color="#7CFC00"
+                    v-if="show"
+            >
+            </van-progress>
+
+            <van-list
+                    @load="onLoad"
+            >
+                <van-cell
+                        v-for="(item,index) in fileList"
+                        :key="item"
+                        :value="item.name"
+                        @click="download(index)"
+                >
+                </van-cell>
+            </van-list>
+
+
+        </div>
+
+        <van-tabbar v-model="active">
+            <van-tabbar-item icon="chat-o">发送消息</van-tabbar-item>
+            <van-tabbar-item icon="idcard">接收文件</van-tabbar-item>
+        </van-tabbar>
+
+        <audio ref="msgRef" src="/file/msg.mp3"></audio>
+        <audio ref="tipRef" src="/file/1.mp3"></audio>
+    </div>
+<script>
+    var socket = null;
+    new Vue({
+        el: '#app',
+        data: {
+            active: 0,
+            msg: {
+                content: ''
+            },
+            show: false,
+            percentage: 0,
+            fileList: [],
+            websocketUrl: '',
+            clipboard: null
+        },
+        methods: {
+            afterRead(file) {
+                let that = this
+                file.status = 'uploading';
+                file.message = '上传中...';
+                vant.Toast.loading({
+                    message: '加载中...',
+                    forbidClick: true,
+                });
+                // 此时可以自行将文件上传至服务器
+                //console.log(file);
+
+                let formData = new FormData();
+                formData.append('file', file.file)
+
+                that.show = true
+                $.ajax({
+                    type:"post",
+                    url:"/msg/file/upload",
+                    async:true,
+                    data:formData,
+                    cache:false,
+                    processData: false,
+                    contentType: false,
+                    xhr: function xhr() {
+                        //获取原生的xhr对象
+                        var xhr = $.ajaxSettings.xhr();
+                        if (xhr.upload) {
+                            //添加 progress 事件监听
+                            xhr.upload.addEventListener('progress', function (e) {
+                                //e.loaded 已上传文件字节数
+                                //e.total 文件总字节数
+                                that.percentage = parseInt(e.loaded / e.total * 100)
+                            }, false);
+                        }
+                        return xhr;
+                    },
+                    success:function(res){
+                        that.$refs.progress.resize()
+                        that.percentage = 0
+                        that.show = false
+                        if(res.code === 1) {
+                            vant.Toast.success('上传成功');
+                        }
+                    },
+                    error:function(error) {
+                        vant.Toast.fail('网络异常');
+                    }
+                })
+            },
+            send() {
+                $.ajax({
+                    type:"post",
+                    url:"/msg/send",
+                    async:true,
+                    contentType: "application/json;charset=utf8", //必须这样写
+                    dataType:"json",
+                    data: JSON.stringify(this.msg),
+                    success:function(res) {
+                        if(res.code === 1) {
+                            vant.Toast.success('发送成功');
+                        }
+                    },
+                    error:function(error) {
+                        vant.Toast.fail('网络异常');
+                    }
+                });
+            },
+            receive() {
+                let that = this
+                $.ajax({
+                    type:"get",
+                    url:"/msg/file/list",
+                    async:true,
+                    success:function(res) {
+                        if(res.code === 1) {
+                            that.fileList = res.data
+                        }
+                    },
+                    error:function(error) {
+                        vant.Toast.fail('网络异常');
+                    }
+                });
+            },
+            onLoad(){
+                this.receive()
+            },
+            clear() {
+                this.msg.content = ''
+            },
+            download(index) {
+                let path = this.fileList[index].path
+                window.location.href = path
+            },
+            getWebSocketInfo() {
+                let that = this
+                $.ajax({
+                    type:"get",
+                    url:"/msg/get/websocket/info",
+                    async:false,
+                    success:function(res) {
+                        if(res.code === 1) {
+                            that.websocketUrl = res.data
+                        }
+                    },
+                    error:function(error) {
+                        vant.Toast.fail('网络异常');
+                    }
+                });
+            }
+        },
+        created() {
+            let that = this
+            this.getWebSocketInfo()
+            // 判断当前浏览器是否支持WebSocket
+            if ('WebSocket' in window) {
+                socket = new WebSocket(this.websocketUrl);
+            } else {
+                alert('该浏览器不支持本系统即时通讯功能，推荐使用谷歌或火狐浏览器！');
+            }
+            socket.onopen = ()=> {
+                //console.log('成功连接服务端')
+            }
+            // 接收到消息的回调方法
+            socket.onmessage = function(res) {
+                that.msg.content = res.data
+                try {
+                    that.$refs.msgRef.play()
+                }catch (e) {
+
+                }
+            };
+
+            this.receive()
+
+            this.clipboard = new ClipboardJS('#copy', {
+                text: function (t) {
+                    return that.msg.content
+                }
+            })
+            this.clipboard.on('success', function (e) {
+                vant.Toast.success('复制成功');
+                that.$refs.tipRef.play()
+            })
+        }
+    });
+
+</script>
+</body>
+</html>
