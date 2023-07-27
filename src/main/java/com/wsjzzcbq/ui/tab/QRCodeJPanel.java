@@ -3,11 +3,12 @@ package com.wsjzzcbq.ui.tab;
 import com.wsjzzcbq.constant.AppConsts;
 import com.wsjzzcbq.constant.MsgConsts;
 import com.wsjzzcbq.constant.NetworkProtocolConsts;
-import com.wsjzzcbq.ui.msg.PopMessage;
+import com.wsjzzcbq.ui.drop.DropFileFrame;
 import com.wsjzzcbq.ui.rightclick.MJTextField;
 import com.wsjzzcbq.util.*;
 import com.wsjzzcbq.web.websocket.WebSocketBroadcast;
 import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 
@@ -51,8 +52,12 @@ public class QRCodeJPanel extends JPanel {
         sendMsgButton.setBounds(30 + AppConsts.GLOBAL_SIZE -150, 110, buttonWidth, 30);
         this.add(sendMsgButton);
 
+        JButton sendFileButton = new JButton(MsgConsts.SEND_FILE_BUTTON);
+        sendFileButton.setBounds(30 + AppConsts.GLOBAL_SIZE -150, 150, buttonWidth, 30);
+        this.add(sendFileButton);
+
         JButton clearMsgButton = new JButton(MsgConsts.CLEAR_BUTTON);
-        clearMsgButton.setBounds(30 + AppConsts.GLOBAL_SIZE -150, 150, buttonWidth, 30);
+        clearMsgButton.setBounds(30 + AppConsts.GLOBAL_SIZE -150, 190, buttonWidth, 30);
         this.add(clearMsgButton);
 
 
@@ -87,6 +92,11 @@ public class QRCodeJPanel extends JPanel {
             textField.copy();
 
             PopMessageUtils.success(MsgConsts.COPY_SUCCESS_MSG);
+        });
+
+        sendFileButton.addActionListener(e->{
+            DropFileFrame dropFileFrame = new DropFileFrame("拖拽文件");
+            dropFileFrame.showFrame();
         });
 
         clearButton.addActionListener(v->textField.setText(""));

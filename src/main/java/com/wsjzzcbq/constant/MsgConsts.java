@@ -8,6 +8,8 @@ package com.wsjzzcbq.constant;
  */
 public class MsgConsts {
 
+    private MsgConsts(){}
+
     public static final String TITLE = "开发工具集";
 
     /**
@@ -17,6 +19,8 @@ public class MsgConsts {
     public static final String VIDEO_DURATION_CALCULATION = "视频时长计算";
     public static final String DELETE_FILE = "删除文件";
     public static final String TELE_COMMUNICATION = "远程通信";
+    public static final String STOCK_CALCULATION = "股票成本计算";
+    public static final String LETTER_CONVERSION = "字母转换";
 
     /**
      * 显示按钮或标签
@@ -24,9 +28,12 @@ public class MsgConsts {
     public static final String COPY_BUTTON = "复制";
     public static final String CLEAR_BUTTON = "清空";
     public static final String SEND_MSG_BUTTON = "发送消息";
+    public static final String SEND_FILE_BUTTON = "发送文件";
     public static final String BROWSER_OPEN_BUTTON = "打开浏览器";
     public static final String DELETE_BUTTON = "删除";
     public static final String CALCULATION_BUTTON = "计算";
+    public static final String UPPER_BUTTON = "转大写";
+    public static final String LOWER_BUTTON = "转小写";
 
     public static final String ADDRESS_LABEL = "地址:";
     public static final String DURATION_LABEL = "时长:";
@@ -35,6 +42,17 @@ public class MsgConsts {
     public static final String SINGLE_THREAD_LABEL = "单线程";
     public static final String MANY_THREAD_LABEL = "多线程";
     public static final String CALCULATION_TIME_LABEL = "计算耗时:";
+    public static final String COST_LABEL = "成本:";
+    public static final String POSITIONS_LABEL = "持仓:";
+    public static final String PRICE_LABEL = "市价:";
+    public static final String QUANTITY_LABEL = "购买数量:";
+    public static final String TARGET_COST_LABEL = "购买后成本:";
+    public static final String INVESTMENT_AMOUNT_LABEL = "需投入金额:";
+    public static final String DIVIDENDS_LABEL = "分红:";
+    public static final String DIVIDENDS_AFTER_COST_LABEL = "分红后成本:";
+
+    public static final String LETTER_LABEL = "转换前的字母:";
+    public static final String LETTER_CONVERT_LABEL = "转换后的字母:";
 
 
     public static final String CALCULATIONING_TEXT = "计算中...";
@@ -46,9 +64,9 @@ public class MsgConsts {
      * 提示反馈消息
      */
     public static final String PLEASE_ENTER_FOLDER_MSG = "请输入文件夹";
-    public static final String COPY_SUCCESS_TITLE = "提示";
     public static final String COPY_SUCCESS_MSG = "复制成功";
+    public static final String SAVE_SUCCESS_MSG = "保存成功";
     public static final String BROWSER_OPEN_FAIL_MSG = "浏览器打开失败";
-    public static final String DELETE_SUCCESS_MSG = "删除成功";
-    public static final String CALCULATION_FINISH_MSG = "计算完成";
+    public static final String PLEASE_ENTER_PARAMETERS = "请输入参数";
+
 }

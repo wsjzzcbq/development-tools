@@ -1,7 +1,5 @@
 package com.wsjzzcbq.constant;
 
-import java.io.File;
-
 /**
  * AppConsts
  *
@@ -9,10 +7,18 @@ import java.io.File;
  * @date 2022/04/06
  */
 public class AppConsts {
-
-    public static final String appTmpPath = "developmenttool" + File.separator;
-
-    public static final int GLOBAL_SIZE = 650;
+    /**
+     * logo图标
+     */
+    public static final String ICON_LOGO = "images/logo/icon_taiji.png";
+    /**
+     * 拖拽弹出层icon
+     */
+    public static final String ICON_FILE = "images/logo/icon_file.png";
+    /**
+     * 窗体宽高
+     */
+    public static final int GLOBAL_SIZE = 800;
     /**
      * 二维码大小
      */

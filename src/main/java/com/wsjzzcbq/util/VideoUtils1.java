@@ -35,9 +35,7 @@ public class VideoUtils1 {
         System.out.println(start);
 
         File file = new File(path);
-        double durations = 0.0;
-        double sum = show(file, durations);
-
+        double sum = show(file);
 
         System.out.println("============");
         System.out.println("总时间: " + sum + "分钟");
@@ -58,11 +56,12 @@ public class VideoUtils1 {
                 .build();
     }
 
-    public static double show(File file, double durations) {
+    public static double show(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
+            double durations = 0.0;
             for (File f : files) {
-                durations = durations + show(f, durations);
+                durations = durations + show(f);
             }
             return durations;
         }
