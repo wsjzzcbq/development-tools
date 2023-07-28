@@ -3,27 +3,179 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <!-- import CSS -->
+	<script src="https://unpkg.com/vue-i18n@9"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
-    <!-- import JavaScript -->
     <script src="https://unpkg.com/element-plus"></script>
-    <title>Element Plus demo</title>
+    <title>development-tools</title>
+	<style>
+		body {
+			margin: 0;
+			background: #FFFFFF;
+		}
+		.headr {
+		}
+		.nav {
+			display: flex;
+			justify-content: right;
+		}
+		.title {
+			display: flex;
+			justify-content: center;
+		}
+		.language {
+			margin-right: 100px;
+		}
+		.body {
+			display: flex;
+		}
+		.left {
+			flex-grow:3
+		}
+		.right {
+			flex-grow:7
+		}
+		.el-menu {
+			border-right: none;
+			list-style: none;
+			position: relative;
+			margin: 0;
+			padding-left: 0;
+			background-color: var(--el-menu-bg-color);
+			box-sizing: border-box;
+		} 
+		.content {
+			
+		}
+	</style>
   </head>
   <body>
-    <div id="app">
-      <el-button type="success">{{ message }}</el-button>
+    <div id="app" style="height: 100vh;">
+		<div class="headr">
+			<div class="nav">
+				<el-switch
+					class="language"
+				    v-model="language"
+				    inline-prompt
+				    active-text="English"
+				    inactive-text="中文"
+					@change="languageChange"
+				  />
+			</div>
+			<div class="title">
+				<h1>{{ $t("message.title") }}</h1>
+			</div>
+		</div>
+		<div class="body">
+			<div class="left">
+				<el-col :span="12" :offset="6">
+				    <el-menu
+				        class="el-menu-vertical-demo"
+						default-active="1"
+						@select="menuSelect"
+				    >
+				        <el-menu-item index="1">
+				          <span>{{ $t("message.menu1") }}</span>
+				        </el-menu-item>
+				        <el-menu-item index="2">
+				          <span>{{ $t("message.menu2") }}</span>
+				        </el-menu-item>
+				        <el-menu-item index="3">
+				          <span>{{ $t("message.menu3") }}</span>
+				        </el-menu-item>
+				      </el-menu>
+				</el-col>
+			</div>
+			<div class="right">
+				<div class="content">
+					<div v-show="content == 1">
+						<p>{{ $t("message.content1.p1") }}</p>
+						<p>{{ $t("message.content1.p2") }}</p>
+						<el-image style="width: 600px; height: 600px" src="./img/1.png" :fit="fit" />
+					</div>
+					<div v-show="content == 2">
+						<p>{{ $t("message.content2.p1") }}</p>
+						<p>{{ $t("message.content2.p2") }}</p>
+						<el-image style="width: 600px; height: 600px" src="./img/2.png" :fit="fit" />
+					</div>
+					<div v-show="content == 3">
+						<p>{{ $t("message.content3.p") }}</p>
+						<el-image style="width: 600px; height: 600px" src="./img/3.png" :fit="fit" />
+					</div>
+					
+				</div>
+			</div>
+		</div>
     </div>
     <script>
+		const messages = {
+		  en: {
+		    message: {
+		      title: 'Introduction to Development Tool Projects',
+			  menu1: 'LAN communication',
+			  menu2: 'video duration calculation',
+			  menu3: 'delete file',
+			  content1: {
+				p1: 'You can use your phone to scan the QR code and open the page, enabling data communication between your phone and computer through the opened page',
+				p2: 'Can send messages and files'
+			  },
+			  content2: {
+				p1: 'You can enter the computer video folder address and click Calculate to calculate the total duration of all videos',
+				p2: 'The calculation mode is divided into single threaded and multi threaded'
+			  },
+			  content3: {
+			  	p: 'You can enter the computer file directory and click Delete to delete all files under the file directory'
+			  }
+		    }
+		  },
+		  cn: {
+		    message: {
+		      title: 'development-tools 开发工具项目介绍',
+			  menu1: '局域网通信',
+			  menu2: '视频时长计算',
+			  menu3: '删除文件',
+			  content1: {
+			  	p1: '可使用手机扫描二维码打开页面，通过打开的页面实现手机和电脑的数据通信',
+			  	p2: '可发送消息和文件'
+			  },
+			  content2: {
+			  	p1: '可输入电脑视频文件夹地址，点击计算，即可计算所有视频总时长',
+			  	p2: '计算模式分为单线程和多线程'
+			  },
+			  content3: {
+				p: '可输入电脑文件目录，点击删除，即可删除文件目录下全部文件'
+			  }
+		    }
+		  }
+		}
+		const i18n = VueI18n.createI18n({
+		  locale: 'ja', 
+		  fallbackLocale: 'en',
+		  messages, 
+		})
       const App = {
         data() {
           return {
-            message: "Hello Element Plus",
-          };
+			content: 1,
+			language: true
+          }
         },
-      };
-      const app = Vue.createApp(App);
-      app.use(ElementPlus);
-      app.mount("#app");
+		methods: {
+			menuSelect(index) {
+				this.content = parseInt(index)
+			},
+			languageChange(v) {
+				if(v) {
+					this.$i18n.locale = 'en'
+				} else {
+					this.$i18n.locale = 'cn'
+				}
+			}
+		}
+      }
+      const app = Vue.createApp(App)
+	  app.use(i18n)
+      app.use(ElementPlus)
+      app.mount("#app")
     </script>
   </body>
 </html>
